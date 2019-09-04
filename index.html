@@ -22,7 +22,6 @@
 
         .frame__heading { 
             margin: 15px 0;
-            opacity: 0;
         }
 
         .frame__subheading { 
@@ -30,23 +29,25 @@
             opacity: 0; 
         }
 
-        .frame.show .js-fadeIn {
+        .js-fadeIn { opacity: 0; }
+
+        .frame.frame--show .js-fadeIn {
             animation-name: fadeIn;
             animation-duration: 4s;
             animation-fill-mode: forwards;
         }
 
-        .frame.show .js-fadeOrder-2 { animation-delay: 1s; }
+        /* We can add as many elements as needed and just use animation-delay to set the time when they will appear */
+        .frame.frame--show .js-fadeOrder-2 { animation-delay: 1s; }
+        .frame.frame--show .js-fadeOrder-3 { animation-delay: 2s; }
 
-        .show { opacity: 1; }
+        .frame--show { opacity: 1; }
 
-            /* Safari 4.0 - 8.0 */
         @-webkit-keyframes fadeIn {
             from {opacity: 0;}
             to {opacity: 1;}
         }
 
-        /* Standard syntax */
         @keyframes fadeIn {
             from {opacity: 0;}
             to {opacity: 1;}
@@ -89,12 +90,12 @@ function play(frames, framesNum, frameDuration) {
     frames.forEach((frame, index) => {
         setTimeout(() => {
             if ( index !== 0 ) {
-                frames[index-1].classList.remove('show');
+                frames[index-1].classList.remove('frame--show');
             } else {
-                frames[framesNum - 1].classList.remove('show');
+                frames[framesNum - 1].classList.remove('frame--show');
             }
 
-            frame.classList.add('show');
+            frame.classList.add('frame--show');
         }, frameDuration * index);
     });
 }
