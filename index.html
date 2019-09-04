@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Animation proto</title>
+    <style>
+        .frame {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            left: 0;
+            top: 0;
+            width: 300px;
+            height: 300px;
+            border: 2px solid red;
+            background: #000;
+            color: #f00;
+            opacity: 0;
+        }
+
+        .frame__heading { 
+            margin: 15px 0;
+            opacity: 0;
+        }
+
+        .frame__subheading { 
+            color: #fff;
+            opacity: 0; 
+        }
+
+        .frame.show .js-fadeIn {
+            animation-name: fadeIn;
+            animation-duration: 4s;
+            animation-fill-mode: forwards;
+        }
+
+        .frame.show .js-fadeOrder-2 { animation-delay: 1s; }
+
+        .show { opacity: 1; }
+
+            /* Safari 4.0 - 8.0 */
+        @-webkit-keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        /* Standard syntax */
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+    </style>
+</head>
+<body>
+    <div class="frame js-frame">
+        <div class="frame__heading js-fadeIn js-fadeOrder-1">Frame 1 heading</div>
+        <div class="frame__subheading js-fadeIn js-fadeOrder-2">Frame 1 subheading</div>
+    </div><!-- end frame -->
+    <div class="frame js-frame">
+        <div class="frame__heading js-fadeIn js-fadeOrder-1">Frame 2 heading</div>
+        <div class="frame__subheading js-fadeIn js-fadeOrder-2">Frame 2 subheading</div>
+    </div><!-- end frame -->
+    <div class="frame js-frame">
+        <div class="frame__heading js-fadeIn js-fadeOrder-1">Frame 3 heading</div>
+        <div class="frame__subheading js-fadeIn js-fadeOrder-2">Frame 3 subheading</div>
+    </div><!-- end frame -->
+<script>
+
+initAnimation();
+
+function initAnimation(frameDuration=4000, repeat=3) {
+    const frames = document.querySelectorAll('.js-frame');
+    const framesNum = frames.length;
+    let count = 0;
+
+    play(frames, framesNum, frameDuration);
+
+    setInterval(() => {
+        count++;
+        if ( count < repeat ) {
+            play(frames, framesNum, frameDuration);
+        }
+    }, framesNum * frameDuration);
+}
+
+function play(frames, framesNum, frameDuration) {
+    frames.forEach((frame, index) => {
+        setTimeout(() => {
+            if ( index !== 0 ) {
+                frames[index-1].classList.remove('show');
+            } else {
+                frames[framesNum - 1].classList.remove('show');
+            }
+
+            frame.classList.add('show');
+        }, frameDuration * index);
+    });
+}
+
+</script>
+</body>
+</html>
