@@ -26,8 +26,9 @@
 
         .frame__subheading { 
             color: #fff;
-            opacity: 0; 
         }
+
+        .js-frame { transition: 1s all; }
 
         .js-fadeIn { opacity: 0; }
 
@@ -71,6 +72,23 @@
 
 initAnimation();
 
+function Timer(callback, delay) {
+    var timerId, start, remaining = delay;
+
+    this.pause = function() {
+        window.clearTimeout(timerId);
+        remaining -= Date.now() - start;
+    };
+
+    this.resume = function() {
+        start = Date.now();
+        window.clearTimeout(timerId);
+        timerId = window.setTimeout(callback, remaining);
+    };
+
+    this.resume();
+}
+
 function initAnimation(frameDuration=4000, repeat=3) {
     const frames = document.querySelectorAll('.js-frame');
     const framesNum = frames.length;
@@ -88,7 +106,7 @@ function initAnimation(frameDuration=4000, repeat=3) {
 
 function play(frames, framesNum, frameDuration) {
     frames.forEach((frame, index) => {
-        setTimeout(() => {
+        const timer = new Timer(() => {
             if ( index !== 0 ) {
                 frames[index-1].classList.remove('frame--show');
             } else {
