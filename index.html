@@ -60,7 +60,7 @@
         <div class="frame__heading js-fadeIn js-fadeOrder-1">Frame 1 heading</div>
         <div class="frame__subheading js-fadeIn js-fadeOrder-2">Frame 1 subheading</div>
     </div><!-- end frame -->
-    <div class="frame js-frame" data-transition-added="false">
+    <div class="frame js-frame" data-transition-added="false" style="background-color: wheat;">
         <div class="frame__heading js-fadeIn js-fadeOrder-1">Frame 2 heading</div>
         <div class="frame__subheading js-fadeIn js-fadeOrder-2">Frame 2 subheading</div>
     </div><!-- end frame -->
@@ -78,33 +78,59 @@ function initAnimation(frameDuration=4000, repeat=3) {
     const framesNum = frames.length;
     let count = 0;
 
+    // Checking if we have only one frame
+    // and not starting the animation at all
+    if ( framesNum === 1 ) {
+        frames[0].classList.add('frame--show');
+        return;
+    }
+    
     play(frames, framesNum, frameDuration);
     setInterval(() => {
         count++;
         if ( count < repeat ) {
-            play(frames, framesNum, frameDuration);
+        let finalLoop = (count === repeat -1);
+        play(frames, framesNum, frameDuration, finalLoop);
         }
     }, framesNum * frameDuration);
 }
 
-function play(frames, framesNum, frameDuration) {
+function play(frames, framesNum, frameDuration, final=false) {
     frames.forEach((frame, index) => {
         setTimeout(() => {
-            frame.classList.add('frame--show');
-
-            if ( frame.dataset.transitionAdded === 'false' ) {
-                frame.addEventListener('transitionend', () => {
-                    if ( index !== 0 ) {
-                        frames[index-1].classList.remove('frame--show');
-                    } else {
-                        frames[framesNum - 1].classList.remove('frame--show');
-                    }
-                });
-                frame.dataset.transitionAdded = 'true';
+        frame.classList.add('frame--show');
+        
+        // Specific case when we have only 2 frames
+        // Problem with 'transitionend' system in this case is that
+        // 'transitionend' on the second one hides the first frame 
+        // and that new 'transitionend' event on the first one, is hiding the second (last frame)
+        if ( framesNum === 2 ) {
+            // Another check if we are on the second frame 
+            // and also if we are not in the final animation loop
+            // we are checking for the final loop cause we don't want to
+            // finish the animation with the starting frame, but to keep final one visible
+            if ( index === 1 && !final ) {
+            setTimeout(() => {
+                frame.classList.remove('frame--show');
+            }, frameDuration);
             }
+            
+            return;
+        }
+
+        if ( frame.dataset.transitionAdded === 'false' ) {
+            frame.addEventListener('transitionend', () => {
+            if ( index !== 0 ) {
+                frames[index-1].classList.remove('frame--show');
+            } else {
+                frames[framesNum - 1].classList.remove('frame--show');
+            }
+            });
+            frame.dataset.transitionAdded = 'true';
+        }
         }, frameDuration * index);
     });
-}
+}      
 
 </script>
 </body>
